@@ -173,9 +173,9 @@ class SkillsStore:
                     entry = SkillEntry.from_github_url(skill)
                 return entry
             else:
-                return store_skill
+                return store_skill[0]
         elif "." in skill:
-            return self.osm.search_skills_by_id(skill)
+            return self.osm.search_skills_by_id(skill)[0]
         return None
 
     def get_remote_entries(self, url):
