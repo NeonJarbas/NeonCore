@@ -65,11 +65,14 @@ def get_language_dir(base_path, lang="en-us"):
 
 class TranslatorFactory:
     CLASSES = {}
+    CLASS2PLUGIN = {"google": "googletranslate_plug"}
 
     @staticmethod
     def create(module=None):
         config = Configuration.get().get("language", {})
         module = module or config.get("translation_module", "google")
+        if module in TranslatorFactory.CLASS2PLUGIN:
+            module = TranslatorFactory.CLASS2PLUGIN[module]
         if module not in DetectorFactory.CLASSES:
             # plugin!
             clazz = load_tx_plugin(module)
@@ -82,12 +85,15 @@ class TranslatorFactory:
 
 class DetectorFactory:
     CLASSES = {}
+    CLASS2PLUGIN = {"google": "googletranslate_detection_plug",
+                    "fastlang": "fastlang_plug"}
 
     @staticmethod
     def create(module=None):
         config = Configuration.get().get("language", {})
         module = module or config.get("detection_module", "fastlang")
-
+        if module in DetectorFactory.CLASS2PLUGIN:
+            module = DetectorFactory.CLASS2PLUGIN[module]
         if module not in DetectorFactory.CLASSES:
             # plugin!
             clazz = load_lang_detect_plugin(module)
