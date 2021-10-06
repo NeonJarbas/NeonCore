@@ -26,7 +26,7 @@
 import os
 
 from glob import glob
-from neon_utils.configuration_utils import get_neon_skills_config
+from neon_core.util.skill_utils import get_skills_config
 from neon_utils.log_utils import LOG
 from neon_core.skills.skill_store import SkillsStore
 from mycroft.util import connected
@@ -39,7 +39,7 @@ class NeonSkillManager(SkillManager):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.skill_config = kwargs.get("config") or get_neon_skills_config()
+        self.skill_config = kwargs.get("config") or get_skills_config()
         self.skill_downloader = SkillsStore(skills_dir=self.skill_config["directory"], config=self.skill_config,
                                             bus=self.bus)
         self.skill_downloader.skills_dir = self.skill_config["directory"]

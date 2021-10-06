@@ -25,12 +25,12 @@
 
 import os
 import unittest
-from neon_utils.configuration_utils import get_neon_local_config
+from mycroft.configuration import Configuration
 
 
 class TestSetupRemote(unittest.TestCase):
     def test_config_from_setup(self):
-        local_config = get_neon_local_config()
+        local_config = Configuration.get()
         self.assertEqual(local_config["devVars"]["devType"], "linux")
         self.assertFalse(local_config["prefFlags"]["devMode"])
         self.assertEqual(local_config["stt"]["module"], "google_cloud_streaming")
@@ -47,7 +47,7 @@ class TestSetupRemote(unittest.TestCase):
             import neon_core_server
 
     def test_installed_skills(self):
-        local_config = get_neon_local_config()
+        local_config = Configuration.get()
         skill_dir = os.path.expanduser(local_config["dirVars"]["skillsDir"])
         self.assertTrue(os.path.isdir(skill_dir))
         self.assertGreater(len(os.listdir(skill_dir)), 0)

@@ -41,8 +41,11 @@ def setup_holmes_config():
         "module_overrides": {
             "neon_core": {
                 "xdg": True,
+                # xdg folder namespace
                 "base_folder": "neon",
-                "config_filename": "neon.conf",
+                # system/user config file name
+                "config_filename": "ngi_local_conf.yml",
+                # default values
                 "default_config_path": join(dirname(__file__),
                                             'configuration', 'neon.conf')
             }
@@ -66,10 +69,7 @@ def setup_holmes_config():
     with open(HOLMES_CONFIG, "w") as f:
         json.dump(cfg, f, indent=4, ensure_ascii=True)
 
-# make holmesV Configuration.get() load neon.conf
-# TODO HolmesV does not yet support yaml configs, once it does
-#  Configuration.get() will be made to load the existing neon config files,
-#  for now it simply provides correct default values
+# make holmesV Configuration.get() load neon.yml
 setup_holmes_config()
 
 

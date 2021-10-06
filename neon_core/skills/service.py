@@ -34,8 +34,8 @@ from mycroft.util.process_utils import ProcessStatus, StatusCallbackMap
 from neon_core.skills.fallback_skill import FallbackSkill
 from neon_core.skills.intent_service import NeonIntentService
 from neon_core.skills.skill_manager import NeonSkillManager
-from neon_utils.configuration_utils import get_neon_skills_config, \
-    get_neon_lang_config
+from neon_core.util.skill_utils import get_skills_config
+from neon_core.language import get_lang_config
 from neon_utils.net_utils import check_online
 
 
@@ -77,7 +77,7 @@ class NeonSkillService:
     def start(self):
         # config = Configuration.get()
         # Set the active lang to match the configured one
-        set_default_lang(get_neon_lang_config().get('internal', 'en-us'))
+        set_default_lang(get_lang_config().get('internal', 'en-us'))
         # Set the default timezone to match the configured one
         set_default_tz()
 
@@ -134,7 +134,7 @@ class NeonSkillService:
             )
 
     def _wait_for_internet_connection(self):
-        if get_neon_skills_config().get("wait_for_internet", True):
+        if get_skills_config().get("wait_for_internet", True):
             while not check_online():
                 time.sleep(1)
         else:

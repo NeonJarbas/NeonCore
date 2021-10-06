@@ -35,12 +35,11 @@ from mycroft.util.log import LOG
 from datetime import datetime, timedelta
 
 from neon_utils.authentication_utils import repo_is_neon
-from neon_utils.configuration_utils import get_neon_skills_config
-
+from neon_core.util.skill_utils import get_skills_config
 
 class SkillsStore:
     def __init__(self, skills_dir, config=None, bus=None):
-        self.config = config or get_neon_skills_config()
+        self.config = config or get_skills_config()
         self.disabled = self.config.get("disable_osm", False)
         self.skills_dir = skills_dir
         self.osm = self.load_osm()

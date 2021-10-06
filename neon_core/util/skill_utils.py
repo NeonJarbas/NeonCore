@@ -26,8 +26,43 @@
 from os.path import expanduser
 from ovos_skills_manager.osm import OVOSSkillsManager
 from ovos_skills_manager.session import SESSION as requests, set_github_token, clear_github_token
-from neon_utils.configuration_utils import get_neon_skills_config
 from neon_utils.log_utils import LOG
+import json
+from mycroft.configuration import Configuration
+from neon_utils.configuration_utils import get_neon_local_config
+from pprint import pprint
+
+def get_skills_config() -> dict:
+    """
+    Get a configuration dict for the skills module. Merge any values from Mycroft config if missing from Neon.
+    Returns:
+        dict of config params used for the Mycroft Skills module
+    """
+    core_config = Configuration.get()
+    neon_skills = core_config.get("skills", {})
+    neon_skills["directory"] = expanduser(core_config["dirVars"].get("skillsDir"))
+    neon_skills["directory_override"] = neon_skills["directory"]
+    neon_skills["disable_osm"] = neon_skills["skill_manager"] != "osm"
+    if not isinstance(neon_skills["auto_update_interval"], float):
+        try:
+            neon_skills["auto_update_interval"] = float(neon_skills["auto_update_interval"])
+        except Exception as e:
+            LOG.error(e)
+            neon_skills["auto_update_interval"] = 24.0
+    if not isinstance(neon_skills["appstore_sync_interval"], float):
+        try:
+            neon_skills["appstore_sync_interval"] = float(neon_skills["appstore_sync_interval"])
+        except Exception as e:
+            LOG.error(e)
+            neon_skills["appstore_sync_interval"] = 6.0
+    neon_skills["update_interval"] = neon_skills["auto_update_interval"]  # Backwards Compat.
+    if not neon_skills["neon_token"]:
+        try:
+            neon_skills["neon_token"] = find_neon_git_token()  # TODO: GetPrivateKeys
+            populate_github_token_config(neon_skills["neon_token"])
+        except FileNotFoundError:
+            LOG.warning(f"No Github token found; skills may fail to install!")
+    return neon_skills
 
 
 def install_skills_from_list(skills_to_install: list, config: dict = None):
@@ -36,7 +71,7 @@ def install_skills_from_list(skills_to_install: list, config: dict = None):
     :param skills_to_install: list or skill URLs to install
     :param config: optional dict configuration
     """
-    config = config or get_neon_skills_config()
+    config = config or get_skills_config()
     skill_dir = expanduser(config["directory"])
     osm = OVOSSkillsManager()
     token_set = False
@@ -57,7 +92,7 @@ def install_skills_default(config: dict = None):
     """
     Installs default skills from passed or default configuration
     """
-    config = config or get_neon_skills_config()
+    config = config or get_skills_config()
     skills_list = config["default_skills"]
     set_github_token(config.get("neon_token"))
     if isinstance(skills_list, str):
