@@ -1,5 +1,5 @@
 # mycroft
-HolmesV[all]==2021.5.6a20
+HolmesV[all]==2021.10.6
 mock_msm
 
 # neon core modules
@@ -23,7 +23,7 @@ RAKEkeywords>=0.2.0
 
 # Patch Dependency Conflicts
 protobuf~=3.17.0
-mycroft-messagebus-client==0.9.1
+mycroft-messagebus-client>=0.9.4
 tornado==6.0.3
 numpy==1.19.5
 pyee==8.1.0
